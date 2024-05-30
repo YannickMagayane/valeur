@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Document{% endblock %}</title>
+    <!-- Intégration de Tailwind CSS via CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-green-500 p-4">
+        <div class="container mx-auto">
+            <div class="flex justify-between items-center">
+                <div>
+                    {% if user.is_superuser %}
+                    <a href="{% url 'archive_list' %}" class="text-white font-semibold">Archivage Mairie</a>
+                    {% else %}
+                    <a href="{% url 'archive_search' %}" class="text-white font-semibold">Archivage Mairie</a>
+                    {% endif %}
+                </div>
+                <div class="hidden md:block">
+                    {% if user.is_authenticated %}
+                        {% if user.is_superuser %}
+                        <a href="{% url 'archivecategory_list' %}" class="text-white hover:text-gray-200 ml-4">Les Categories</a>
+                        <a href="{% url 'physicaldocument_list' %}" class="text-white hover:text-gray-200 ml-4">Les Sections</a>
+                        <a href="{% url 'register' %}" class="text-white hover:text-gray-200 ml-4">Register</a>
+                        {% else %}
+                        <a href="{% url 'archive_list' %}" class="text-white hover:text-gray-200 ml-4">Les archives</a>
+                        {% endif %}
+                        <a href="{% url 'logout' %}" class="text-white hover:text-gray-200 ml-4">Logout</a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="text-white hover:text-gray-200 ml-4">Login</a>
+                    {% endif %}
+                </div>
+                <div class="block md:hidden">
+                    <!-- Bouton pour le menu mobile -->
+                    <button id="mobile-menu-toggle" class="text-white hover:text-gray-200 focus:outline-none ml-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Menu mobile -->
+    <div id="mobile-menu" class="hidden md:hidden">
+        <div class="bg-green-500 p-4">
+            {% if user.is_authenticated  %}
+        <a href="{% url 'logout' %}" class="block text-white hover:text-gray-200 mt-2">Logout</a>
+        {% else %}
+        <a href="{% url 'login' %}" class="block text-white hover:text-gray-200 mt-2">Login</a>
+        {% endif %}
+        </div>
+    </div>
+
+    <div class="container mx-auto mt-8 px-4 md:px-8 lg:px-16 xl:px-20">
+        {% block content %}
+        {% endblock %}
+    </div>
+    
+
+    <!-- Scripts Tailwind CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.js"></script>
+
+    <!-- Script pour le menu mobile -->
+    <script>
+        document.getElementById('mobile-menu-toggle').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>

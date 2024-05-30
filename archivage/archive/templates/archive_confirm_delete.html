@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Suppression d'Archive{% endblock %}
+
+{% block content %}
+    <div class="max-w-md mx-auto">
+        <h1 class="text-2xl font-semibold mb-4">Suppression d'Archive</h1>
+        <form method="post" action="{% url 'archive_delete' archive.pk %}">
+            {% csrf_token %}
+            <p>Es-tu sûr de vouloir supprimer cet archive "{{ archive.name }}"?</p>
+            <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4">Supprimer</button>
+            <a href="{% url 'archive_list' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Annuler</a>
+        </form>
+    </div>
+{% endblock %}

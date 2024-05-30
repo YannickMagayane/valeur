@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}Détail de l'Archive{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto" oncontextmenu="return false;">
+    <h1 class="text-3xl font-semibold mb-6">Détail de l'Archive</h1>
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div class="px-4 py-5 sm:px-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">{{ archive.title }}</h3>
+        </div>
+        <div class="border-t border-gray-200">
+            <dl>
+                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Catégorie</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ archive.category.name }}</dd>
+                </div>
+                
+                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Date Enregistrée</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ archive.date_registered }}</dd>
+                </div>
+                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Document Numérique</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        <iframe src="{{ archive.document.url }}" class="w-full h-96" onload="restrictDocument()"></iframe>
+                    </dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Désactiver le clic droit
+    document.addEventListener('contextmenu', event => event.preventDefault());
+
+    // Désactiver certaines touches
+    document.addEventListener('keydown', function(event) {
+        if (event.keyCode == 123) { // F12
+            event.preventDefault();
+        }
+        if (event.ctrlKey && event.shiftKey && event.keyCode == 73) { // Ctrl+Shift+I
+            event.preventDefault();
+        }
+        if (event.ctrlKey && event.keyCode == 83) { // Ctrl+S
+            event.preventDefault();
+        }
+        if (event.ctrlKey && event.keyCode == 80) { // Ctrl+P
+            event.preventDefault();
+        }
+    });
+
+    // Fonction pour restreindre le contenu de l'iframe
+    function restrictDocument() {
+        const iframe = document.querySelector('iframe');
+        const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+
+        // Désactiver le clic droit dans l'iframe
+        iframeDocument.addEventListener('contextmenu', event => event.preventDefault());
+
+        // Ajouter d'autres restrictions dans l'iframe si nécessaire
+    }
+</script>
+{% endblock %}
