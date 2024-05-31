@@ -2,11 +2,11 @@
 {% block title %}Détail de l'Archive{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto" oncontextmenu="return false;">
+<div class="max-w-4xl mx-auto">
     <h1 class="text-3xl font-semibold mb-6">Détail de l'Archive</h1>
     <div class="bg-white shadow overflow-hidden sm:rounded-lg">
         <div class="px-4 py-5 sm:px-6">
-            <h3 class="text-lg leading-6 font-medium text-gray-900">{{ archive.title }}</h3>
+            <h3 class="text-lg leading-6 font-medium text-gray-900">{{ archive.name }}</h3>
         </div>
         <div class="border-t border-gray-200">
             <dl>
@@ -22,7 +22,13 @@
                 <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                     <dt class="text-sm font-medium text-gray-500">Document Numérique</dt>
                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                        <iframe src="{{ archive.document.url }}" class="w-full h-96" onload="restrictDocument()"></iframe>
+                        {% if archive.document %}
+                            <div class="overflow-auto">
+                                <img src="{{ archive.document.url }}" alt="Document Image" class="w-auto h-auto" id="documentImage" />
+                            </div>
+                        {% else %}
+                            <p class="text-red-500">Le document numérique n'est pas disponible.</p>
+                        {% endif %}
                     </dd>
                 </div>
             </dl>
@@ -34,7 +40,7 @@
     // Désactiver le clic droit
     document.addEventListener('contextmenu', event => event.preventDefault());
 
-    // Désactiver certaines touches
+    // Désactiver certaines touches globalement
     document.addEventListener('keydown', function(event) {
         if (event.keyCode == 123) { // F12
             event.preventDefault();
@@ -50,15 +56,14 @@
         }
     });
 
-    // Fonction pour restreindre le contenu de l'iframe
-    function restrictDocument() {
-        const iframe = document.querySelector('iframe');
-        const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
-
-        // Désactiver le clic droit dans l'iframe
-        iframeDocument.addEventListener('contextmenu', event => event.preventDefault());
-
-        // Ajouter d'autres restrictions dans l'iframe si nécessaire
-    }
+    // Masquer le contenu lorsque la fenêtre perd le focus (pour empêcher les captures d'écran)
+    let originalContent = document.body.innerHTML;
+    window.onblur = function() {
+        document.body.style.visibility = 'hidden';
+    };
+    window.onfocus = function() {
+        document.body.style.visibility = 'visible';
+    };
 </script>
+
 {% endblock %}
