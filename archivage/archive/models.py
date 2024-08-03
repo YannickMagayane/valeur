@@ -5,7 +5,7 @@ from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from django.contrib.contenttypes.models import ContentType
 from audit.models import LogEntry
-
+from user.models import User
 
 
 class ArchiveCategory(models.Model):
@@ -74,3 +74,19 @@ def log_archive_deletion(sender, instance, **kwargs):
             action_flag='delete',
             change_message='Archive deleted'
         )
+
+
+
+class RepportInformation(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    detail = models.TextField()
+    content_page = models.PositiveBigIntegerField(default=1)
+    date_venu = models.DateField(auto_now_add=True)
+    photo_document = models.ImageField(upload_to='photo_document/')
+    is_receive_secretary = models.BooleanField(default=False)
+    is_receive_twice_confirm = models.BooleanField(default=False)
+    is_receive_twice_rejetter = models.BooleanField(default=False)
+    is_archive = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.user} - {self.date_venu}"

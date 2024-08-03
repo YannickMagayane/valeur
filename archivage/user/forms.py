@@ -53,6 +53,15 @@ class RegisterForm(UserCreationForm):
             }
         )
     )
+    poste = forms.CharField(
+        label="",
+        widget=forms.Select(
+            choices=User._meta.get_field('poste').choices,  # Utiliser les choix définis dans le modèle
+            attrs={
+                "class": "appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+            }
+        )
+    )
     password1 = forms.CharField(
         label="",
         widget=forms.PasswordInput(
@@ -74,7 +83,7 @@ class RegisterForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'email', 'password1', 'password2')
+        fields = ('first_name', 'last_name', 'email','poste', 'password1', 'password2')
 
 
 

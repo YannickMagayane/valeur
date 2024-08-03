@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Liste des Rapports d'Information Non Traités</h1>
+  <div class="mt-4">
+    <a href="{% url 'repportinformation_create' %}" class="inline-block px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Créer un Nouveau Rapport</a>
+  </div>
+  <table class="min-w-full divide-y divide-gray-200">
+    <thead class="bg-gray-50">
+      <tr>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Utilisateur</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Détail</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Page de Contenu</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date de Venue</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Photo</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+      </tr>
+    </thead>
+    <tbody class="bg-white divide-y divide-gray-200">
+      {% for repport in repports %}
+        <tr>
+          <td class="px-6 py-4 whitespace-nowrap">{{ repport.user }}</td>
+          <td class="px-6 py-4 whitespace-nowrap">{{ repport.detail }}</td>
+          <td class="px-6 py-4 whitespace-nowrap">{{ repport.content_page }}</td>
+          <td class="px-6 py-4 whitespace-nowrap">{{ repport.date_venu }}</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            {% if repport.photo_document %}
+              <img src="{{ repport.photo_document.url }}" alt="Photo" class="w-20 h-auto">
+            {% endif %}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <a href="{% url 'repportinformation_update' repport.pk %}" class="text-indigo-600 hover:text-indigo-900">Modifier</a>
+            
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="6" class="px-6 py-4 text-center">Aucun rapport d'information trouvé</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  
+{% endblock %}

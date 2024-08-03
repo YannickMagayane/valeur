@@ -122,13 +122,17 @@ USE_TZ = True
 
 
 
-STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-STATICFILES_DIR = (os.path.join(BASE_DIR, 'static/'),)
+STATIC_URL = '/static/'
 
-MEDIA_ROOT = BASE_DIR / 'media'
+# Emplacement où les fichiers statiques collectés seront stockés
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Répertoires supplémentaires où Django cherchera les fichiers statiques
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
 MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # Default primary key field type

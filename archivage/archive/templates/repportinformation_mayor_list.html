@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Rapports pour le Maire</h1>
+  <table class="min-w-full divide-y divide-gray-200">
+    <thead>
+      <tr>
+        <th class="px-6 py-3 bg-gray-50">Utilisateur</th>
+        <th class="px-6 py-3 bg-gray-50">Détail</th>
+        <th class="px-6 py-3 bg-gray-50">Page de contenu</th>
+        <th class="px-6 py-3 bg-gray-50">Date de venue</th>
+        <th class="px-6 py-3 bg-gray-50">Photo du document</th>
+        <th class="px-6 py-3 bg-gray-50">Actions</th>
+      </tr>
+    </thead>
+    <tbody class="bg-white divide-y divide-gray-200">
+      {% for repport in repports %}
+      <tr>
+        <td class="px-6 py-4 whitespace-nowrap">{{ repport.user.first_name }} {{ repport.user.last_name }}</td>
+        <td class="px-6 py-4 whitespace-nowrap">{{ repport.detail }}</td>
+        <td class="px-6 py-4 whitespace-nowrap">{{ repport.content_page }}</td>
+        <td class="px-6 py-4 whitespace-nowrap">{{ repport.date_venu }}</td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          {% if repport.photo_document %}
+          <img src="{{ repport.photo_document.url }}" class="w-20 h-20">
+          {% else %}
+          Aucune photo
+          {% endif %}
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <form action="{% url 'update_is_receive_twice' repport.pk 'confirm' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Confirmer</button>
+          </form>
+          <form action="{% url 'update_is_receive_twice' repport.pk 'reject' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Rejeter</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

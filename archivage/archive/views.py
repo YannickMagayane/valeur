@@ -1,8 +1,8 @@
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView,View,TemplateView
-from .models import ArchiveCategory, PhysicalDocument, Archive
-from .forms import ArchiveCategoryForm, PhysicalDocumentForm, ArchiveForm, ArchiveSearchForm
+from .models import ArchiveCategory, PhysicalDocument, Archive,RepportInformation
+from .forms import ArchiveCategoryForm, PhysicalDocumentForm, ArchiveForm, ArchiveSearchForm,RepportInformationForm
 from django.contrib import messages
 
 
@@ -58,7 +58,17 @@ class ArchiveCreateView(CreateView):
     form_class = ArchiveForm
     template_name = 'archive_form.html'
 
+    def get_initial(self):
+        initial = super().get_initial()
+        category_id = self.kwargs.get('category_id')
+        if category_id:
+            initial['category'] = ArchiveCategory.objects.get(pk=category_id)
+        return initial
+
     def form_valid(self, form):
+        category_id = self.kwargs.get('category_id')
+        if category_id:
+            form.instance.category = ArchiveCategory.objects.get(pk=category_id)
         response = super().form_valid(form)
         messages.success(self.request, 'Archive créée avec succès.')
         return response
@@ -135,3 +145,97 @@ class ArchiveListView(ListView):
         year = self.request.GET.get('year')
         context['year'] = year
         return context
+    
+
+
+class RepportInformationCreateView(CreateView):
+    model = RepportInformation
+    form_class = RepportInformationForm
+    template_name = 'repportinformation_form.html'
+    success_url = reverse_lazy('unprocessed_repportinformation_list')
+
+    def form_valid(self, form):
+        # Assign the current user to the report
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+class RepportInformationUpdateView(UpdateView):
+    model = RepportInformation
+    form_class = RepportInformationForm
+    template_name = 'repportinformation_form.html'
+    success_url = reverse_lazy('unprocessed_repportinformation_list')
+
+
+
+class UnprocessedRepportInformationListView(ListView):
+    model = RepportInformation
+    template_name = 'repportinformation_list.html'
+    context_object_name = 'repports'
+
+    def get_queryset(self):
+        return RepportInformation.objects.filter(
+            is_receive_secretary=False,
+            is_receive_twice_confirm=False,
+            is_receive_twice_rejetter=False,
+            is_archive=False
+        )
+
+class SecretaryRepportInformationListView(ListView):
+    model = RepportInformation
+    template_name = 'repportinformation_secretary_list.html'
+    context_object_name = 'repports'
+
+    def get_queryset(self):
+        return RepportInformation.objects.filter(is_receive_secretary=False)
+
+class MayorRepportInformationListView(ListView):
+    model = RepportInformation
+    template_name = 'repportinformation_mayor_list.html'
+    context_object_name = 'repports'
+
+    def get_queryset(self):
+        return RepportInformation.objects.filter(
+            is_receive_secretary=True,
+            is_receive_twice_confirm=False,
+            is_archive=False
+        )
+
+class ArchivistRepportInformationListView(ListView):
+    model = RepportInformation
+    template_name = 'repportinformation_archivist_list.html'
+    context_object_name = 'repports'
+
+    def get_queryset(self):
+        return RepportInformation.objects.filter(
+            is_receive_secretary=True,
+            is_receive_twice_confirm=True,
+            is_archive=False
+        )
+
+
+class UpdateIsReceiveSecretaryView(View):
+    def post(self, request, pk):
+        repport = get_object_or_404(RepportInformation, pk=pk)
+        repport.is_receive_secretary = True
+        repport.save()
+        return redirect('unprocessed_repportinformation_list')
+
+
+class UpdateIsReceiveTwiceView(View):
+    def post(self, request, pk, action):
+        repport = get_object_or_404(RepportInformation, pk=pk)
+        if action == 'confirm':
+            repport.is_receive_twice_confirm = True
+        elif action == 'reject':
+            repport.is_receive_twice_rejetter = True
+        repport.save()
+        return redirect('unprocessed_repportinformation_list')
+
+
+class UpdateIsArchiveView(View):
+    def post(self, request, pk):
+        repport = get_object_or_404(RepportInformation, pk=pk)
+        repport.is_archive = True
+        repport.save()
+        return redirect('unprocessed_repportinformation_list')
+

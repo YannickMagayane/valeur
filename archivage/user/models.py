@@ -11,12 +11,19 @@ from .managers import UserManager
 
 
 
-
+type_poste = (
+    ('secretaire','Secretaire'),
+    ('agent','Agent'),
+    ('maire','Maire'),
+    ('archiviste','Archiviste'),
+    ('administrateur','Administrateur')
+)
 
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('email address'), unique=True)
     first_name = models.CharField(_('first name'), max_length=30, blank=True)
     last_name = models.CharField(_('last name'), max_length=30, blank=True)
+    poste = models.CharField(max_length=100,choices=type_poste,default='administrateur')
     date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
     is_active = models.BooleanField(_('active'), default=True)
     is_staff = models.BooleanField(_('staff'), default=True)
